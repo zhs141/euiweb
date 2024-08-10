@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My EUI Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@elastic/eui/33.0.0/eui_theme_light.min.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/@elastic/eui/33.0.0/eui.min.js"></script>
+  <script>
+    const { EuiButton } = window.Eui;
+    ReactDOM.render(
+      <EuiButton>Click me</EuiButton>,
+      document.getElementById('root')
+    );
+  </script>
+</body>
+</html>
