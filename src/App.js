@@ -1,4 +1,6 @@
 import React, { ReactElement } from 'react';
+import '@elastic/eui/dist/eui_theme_dark.css';
+import { EuiButton } from '@elastic/eui';
 import {
   EuiText,
   EuiPageTemplate,
