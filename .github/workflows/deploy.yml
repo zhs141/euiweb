@@ -1,31 +1,57 @@
-name: Deploy to GitHub Pages
-
-on:
+name: Deploy Vue Project to gh-pages
+on: 
   push:
     branches:
-      - main  # 或者您的默认分支名
-
+      - main
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout the repository
+        uses: actions/checkout@master
+ 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # 根据你的项目需求选择 Node.js 版本
+ 
+      - name: Install dependencies
+        run: npm install @elastic/eui @emotion/react @emotion/styled
+ 
+      - name: Build the project
+        run: npm run build
+ 
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.WORK_TOKEN }}   # 替换为你刚刚添加的secret的名字
+          publish_dir: ./dist  # 根据你的打包输出目录进行调整
+ 
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: gh-pages
+ 
+      - name: Modify index.html and add 404.html
+        run: |
+          cd gh-pages
+          sed -i '/<\/head>/i <script>(function(l){if(l.search[1]==="/"){var decoded=l.search.slice(1).split("&").map(function(s){return s.replace(/~and~/g,"&")}).join("?");window.history.replaceState(null,null,l.pathname.slice(0,-1)+decoded+l.hash)}}(window.location))</script>' index.html
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'  # 您可以选择其他 Node.js 版本
-
-    - name: Install dependencies
-      run: npm install @elastic/eui @emotion/react @emotion/styled
-
-    - name: Build project
-      run: npm run build
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+          echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Single Page Apps for GitHub Pages</title><script type="text/javascript">var pathSegmentsToKeep=0;var l=window.location;l.replace(l.protocol+\"//\"+l.hostname+(l.port?\":\"+l.port:\"\")+l.pathname.split(\"/\").slice(0,1+pathSegmentsToKeep).join(\"/\")+\"/?/\"+l.pathname.slice(1).split(\"/\").slice(pathSegmentsToKeep).join(\"/\").replace(/&/g,\"~and~\")+(l.search?\"&\"+l.search.slice(1).replace(/&/g,\"~and~\"):\"\")+l.hash);</script></head><body></body></html>' > 404.html
+ 
+ 
+      - name: Commit and push changes
+        run: | 
+          cd gh-pages
+          # 改为自己的邮箱和名称
+          git config --global user.email "zhouhangshan@github.com"
+          git config --global user.name "zhouhangshan"
+          git commit -m "Update index.html"
+          git push origin gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+ 
+ 
+          
+ 
